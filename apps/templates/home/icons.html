@@ -1,0 +1,85 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Icons {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<!-- <button type="button" class="btn-icon-clipboard" data-clipboard-text="ui-04" title="Copy to clipboard"> -->
+    <!-- Header -->
+    <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="card">
+            <h6 class="card-category">
+              {% if msg %}
+              <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <i class="material-icons">close</i>
+                </button>
+                <span>
+                  <b> Success - </b> {{msg}} <button  type="button" class="btn-icon-clipboard" data-clipboard-text="{{splint_code}}" title="Copy to clipboard"></button></span>
+                  <button  type="button"  href="{}" class="btn"></button>
+                  
+              </div>
+
+              {% endif %}  
+          </h6>
+            <div class="card-header">
+              Create your own splints
+            </div>
+            <div class="card-content">
+              <form action="/new_splint" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row" style="margin-bottom: 23px;margin-left: 7%;">
+                  Size 1 (X axis) 
+                  <input type="range" name="input1" placeholder="1" id="input1"step="4">
+                </div>
+                <div class="row"style="margin-bottom: 23px;margin-left: 7%;">
+                  Size 2 (Y axis)
+                  <input type="range" name="input2" placeholder="1" id="input1"step="5">
+                </div>
+                <div class="row"style="margin-bottom: 23px;margin-left: 7%;">
+                  Size 3 (Z axis)
+                  <input type="range" name="input3" placeholder="1" id="input1"step="4">
+                </div>
+                
+                <input type="submit"class="btn btn-primary my-4" style="margin-left: 7%;">
+            </form>
+            <h3 style="margin-left: 15px;">Search your splints</h3>
+            <div class="card" style="margin:15px">
+              
+            
+            <form class="navbar-form" action="/search_splint" method="GET">
+              <span class="bmd-form-group"><div class="input-group no-border">
+                <input type="text" value="" class="form-control" placeholder="Search..." name="input_splint_code">
+                <button type="submit" class="btn btn-white btn-round btn-just-icon">
+                  <i class="material-icons">search</i>
+                  <div class="ripple-container"></div>
+                </button>
+              </div></span>
+            </form></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-left:10px;margin-top: 2px;">Image of the splint bellow</h3>
+          </div>
+          {%if image%}
+          <img src="{{ image }}" alt=""/>
+          {%endif%}
+              </div>
+            </div>
+          </div>
+          
+      {% include "includes/footer.html" %}
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+
+<script src="/static/assets/vendor/clipboard/dist/clipboard.min.js"></script>
+
+{% endblock javascripts %}

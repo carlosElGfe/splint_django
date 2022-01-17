@@ -13,7 +13,7 @@ import numpy as np
 from matplotlib import pyplot
 from stl import mesh
 from django.core.files import File
-from .models import Splint
+from .models import Splint, User
 from matplotlib import pyplot
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
@@ -23,10 +23,29 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import base64
 import time
+
+def latest_splint():
+    figure = Figure()
+    axes = mplot3d.Axes3D(figure)
+    count = Splint.objects.all().count()
+    splint = Splint.objects.all()[count-1]  
+    your_mesh = mesh.Mesh.from_file(splint.splint_file.path)
+    axes.add_collection3d(mplot3d.art3d.Poly3DCollection(your_mesh.vectors))
+    scale = your_mesh.points.flatten()
+    axes.auto_scale_xyz(scale, scale, scale)
+    output = io.BytesIO()
+    canvas = FigureCanvas(figure)
+    canvas.print_png(output)
+    img_str = base64.b64encode(output.getvalue())
+    data_url = 'data:image/jpg;base64,' + base64.b64encode(output.getvalue()).decode()
+    return data_url
+    
 @login_required(login_url="/login/")
 def index(request):
     context = {'segment': 'index'}
-
+    context['total_users'] = User.objects.all().count()
+    context['total_splints'] = Splint.objects.all().count()
+    context['image']=latest_splint()
     html_template = loader.get_template('home/index.html')
     return HttpResponse(html_template.render(context, request))
 
@@ -44,23 +63,23 @@ def new_splint(request):
     cont = 0
     #scale the mesh
     for v in your_mesh.vectors:
-        print("-")
-    for v in your_mesh.vectors:
-        cont += 1
-        if cont == limit:
-            break
-        elif cont == 1:
-            v *= scale_factor_x
-        elif cont == 2:
-            v *= scale_factor_y
+        print(str(v))
+        v[0][0] = v[0][0] * scale_factor_x
+        v[1][0] = v[1][0] * scale_factor_x
+        v[2][0] = v[2][0] * scale_factor_x
+        v[0][1] = v[0][1] * scale_factor_y
+        v[1][1] = v[1][1] * scale_factor_y
+        v[2][1] = v[2][1] * scale_factor_y
+        #print(str(v))
+
     print("-----")
 
     print(np.meshgrid(your_mesh))
-    your_mesh.save('new_ferula_' + str(Splint.objects.all().count()) +'.stl')
+    your_mesh.save('apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl')
     counts_splints = Splint.objects.all().count()
     Splint.objects.create(
         id_splint = str(counts_splints) + request.user.username,
-        splint_file = 'new_ferula_' + str(Splint.objects.all().count()) +'.stl',
+        splint_file = 'apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl',
         id_user = request.user
     )
     context['splint_code'] = str(counts_splints) + request.user.username
@@ -68,8 +87,9 @@ def new_splint(request):
     figure = Figure()
     axes = mplot3d.Axes3D(figure)
     splint = Splint.objects.filter(id_splint = str(counts_splints) + request.user.username).first()         
+    print("this is the file of the mesh" + str(splint.splint_file.path))
     your_mesh = mesh.Mesh.from_file(splint.splint_file.path)
-    axes.add_collection3d(mplot3d.art3d.Poly3DCollection(your_mesh.vectors*scale_factor_x))
+    axes.add_collection3d(mplot3d.art3d.Poly3DCollection(your_mesh.vectors))
     # Auto scale to the mesh size
     scale = your_mesh.points.flatten()
     
@@ -81,7 +101,7 @@ def new_splint(request):
     img_str = base64.b64encode(output.getvalue())
     data_url = 'data:image/jpg;base64,' + base64.b64encode(output.getvalue()).decode()
     context['image'] = data_url
-    return render(request, "home/icons.html", context)
+    return render(request, "home/splint_creator.html", context)
     
 
 def visualize(request,code):

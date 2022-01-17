@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 class Splint(models.Model):
     id_splint = models.CharField(primary_key=True,max_length=200)
-    splint_file = models.FileField(upload_to='splint_files', blank=False, null=False)
+    splint_file = models.FileField(upload_to='apps/home/media/splints', blank=False, null=False)
     id_user = models.ForeignKey(
         User,
         models.CASCADE,

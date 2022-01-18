@@ -13,6 +13,8 @@ urlpatterns = [
     path('new_splint',views.new_splint,name="new_splint"),
     path('visualize/<str:code>', views.visualize,name="visualize"),
     path('search_splint', views.visualize,name="search_splint"),
+    path('download_splint_stl/<str:code>',views.down_stl,name="download_splint_stl"),
+    path('database',views.data_base,name="database"),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 

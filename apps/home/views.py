@@ -23,7 +23,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import base64
 import time
-
+import os
+import subprocess
 def latest_splint():
     figure = Figure()
     axes = mplot3d.Axes3D(figure)
@@ -136,6 +137,28 @@ def search_splint(request):
     if splint:
         print("fund a matching splint")
     return render(request,'home/icons.html',{})
+
+def data_base(request):
+    #create_gcode()
+    if request.method == "GET":        
+        splints = Splint.objects.all()
+        context = {}
+        context['splints'] = splints
+        return render(request,'home/tables.html',context)
+
+def create_gcode():
+    result = subprocess.run(['cd mandoline-py','ls'], stdout=subprocess.PIPE)
+    print(result)
+    result.stdout
+    '''os.system("cd /etc/mandoline-py/test-models")
+    os.system("cd ..")'''
+
+def down_stl(request,code):
+    try:
+        splint = Splint.objects.filter(id_splint=code).first()
+    finally:
+        return 0
+        
 
 @login_required(login_url="/login/")
 def pages(request):

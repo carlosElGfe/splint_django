@@ -55,7 +55,7 @@ def new_splint(request):
     scale_factor_y = float(request.POST.get("input2"))/ 100
 
     # Load the STL file into a mesh object
-    your_mesh = mesh.Mesh.from_file('ferula.stl')
+    your_mesh = mesh.Mesh.from_file('/home/ubuntu/django/myproject/ferula.stl')
     print("-----")
 
     print(np.meshgrid(your_mesh))
@@ -75,11 +75,11 @@ def new_splint(request):
     print("-----")
 
     print(np.meshgrid(your_mesh))
-    your_mesh.save('apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl')
+    your_mesh.save('/home/ubuntu/django/myproject/apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl')
     counts_splints = Splint.objects.all().count()
     Splint.objects.create(
         id_splint = str(counts_splints) + request.user.username,
-        splint_file = 'apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl',
+        splint_file = '/home/ubuntu/django/myproject/apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl',
         id_user = request.user
     )
     context['splint_code'] = str(counts_splints) + request.user.username

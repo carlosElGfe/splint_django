@@ -143,6 +143,7 @@ def data_base(request):
     if request.method == "GET":        
         splints = Splint.objects.all()
         context = {}
+        context['segment'] = "tables"
         context['splints'] = splints
         return render(request,'home/tables.html',context)
 

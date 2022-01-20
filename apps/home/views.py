@@ -77,7 +77,10 @@ def new_splint(request):
 
     print(np.meshgrid(your_mesh))
     your_mesh.save('/home/ubuntu/django/myproject/apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl')
+    
     counts_splints = Splint.objects.all().count()
+    path_of_splint_stl = "/home/ubuntu/django/myproject/apps/home/media/splints/new_ferula_" + str(counts_splints) +".stl"
+    subprocess.run(["mandoline", path_of_splint_stl], capture_output=True)
     Splint.objects.create(
         id_splint = str(counts_splints) + request.user.username,
         splint_file = '/home/ubuntu/django/myproject/apps/home/media/splints/new_ferula_' + str(Splint.objects.all().count()) +'.stl',
